@@ -79,7 +79,7 @@ class SingleLinkedList {
     Node* head_ptr_  = &head_;
     template <typename I>
     void reassign(I begin_, I end_) {
-        SingleLinkedList<Type> curr;
+		SingleLinkedList<Type> curr;
         Node** ptr = &curr.head_.next_node;
         while (begin_ != end_) {
             *ptr = new Node(*begin_, nullptr);
@@ -106,10 +106,9 @@ class SingleLinkedList {
 		reassign(other.begin(), other.end());
 	}
 	
-	
 	SingleLinkedList& operator=(const SingleLinkedList& rhs) {
-		if (this != &rhs) {
-			auto rhs_copy(rhs);
+		if (*this != rhs) {
+			SingleLinkedList rhs_copy(rhs);
 			swap(rhs_copy);
 		}
 		return *this;
@@ -121,10 +120,7 @@ class SingleLinkedList {
 	}
 
 	[[nodiscard]] Iterator begin() noexcept {
-		if (IsEmpty()) {
-			return Iterator(nullptr);
-		}
-			return Iterator(head_.next_node);
+		return IsEmpty() ? Iterator(nullptr) : Iterator(head_.next_node);
 	}
 	
 	[[nodiscard]] Iterator end() noexcept {
@@ -132,10 +128,7 @@ class SingleLinkedList {
 	}
 	
 	[[nodiscard]] ConstIterator begin() const noexcept {
-		if (IsEmpty()) {
-			return Iterator(nullptr);
-		}
-		return ConstIterator(head_.next_node);
+		return IsEmpty() ? Iterator(nullptr) : ConstIterator(head_.next_node);
 	}
 	
 	[[nodiscard]] ConstIterator end() const noexcept {
@@ -143,10 +136,7 @@ class SingleLinkedList {
 	}
 	
 	[[nodiscard]] ConstIterator cbegin() const noexcept {
-		if (IsEmpty()) {
-			return Iterator(nullptr);
-		}
-		return ConstIterator(head_.next_node);
+		return IsEmpty() ? Iterator(nullptr) : ConstIterator(head_.next_node);
 	}
 	
 	[[nodiscard]] ConstIterator cend() const noexcept {
@@ -170,7 +160,7 @@ class SingleLinkedList {
 	}
 	
 	[[nodiscard]] bool IsEmpty() const noexcept {
-			return size_ == 0 ? true : false;
+			return size_ == 0;
 		}
 		
 	void PushFront(const Type& value) {
@@ -191,10 +181,10 @@ class SingleLinkedList {
 	}
 		
 	Iterator InsertAfter(ConstIterator pos, const Type& value) {
-		auto &prev_node = pos.node_;
-		prev_node->next_node = new Node(value, prev_node->next_node);
+		auto &prv_node = pos.node_;
+		prv_node->next_node = new Node(value, prv_node->next_node);
 		++size_;
-		return Iterator (prev_node->next_node);  
+		return Iterator(prv_node->next_node);  
 	}
 	
   	void PopFront() noexcept {
@@ -217,7 +207,7 @@ class SingleLinkedList {
 		Node *const node_after_erased= node_to_erase->next_node;
 		delete node_to_erase;
 		pos.node_->next_node = node_after_erased;
-		return Iterator (node_after_erased);
+		return Iterator(node_after_erased);
 	}
 		
 	~SingleLinkedList() {
