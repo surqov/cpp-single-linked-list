@@ -82,8 +82,8 @@ class SingleLinkedList {
         Node** ptr = &curr.head_.next_node;
         while (begin_ != end_) {
             *ptr = new Node(*begin_, nullptr);
-            ++curr.size_;
             ptr = &((*ptr)->next_node);
+			++curr.size_;
             ++begin_;
         }
         swap(curr);
@@ -159,8 +159,8 @@ class SingleLinkedList {
 	}
 	
 	[[nodiscard]] bool IsEmpty() const noexcept {
-			return size_ == 0;
-		}
+		return size_ == 0;
+	}
 		
 	void PushFront(const Type& value) {
 		head_.next_node = new Node(value, head_.next_node);
@@ -168,15 +168,12 @@ class SingleLinkedList {
 	} 
 		
 	void Clear() noexcept {
-		if (IsEmpty()) {
-			return;
-		}
 		while (head_.next_node != nullptr) {
 			Node* temp = head_.next_node->next_node;
 			delete head_.next_node;
 			head_.next_node = temp;
+			--size_;
 		}
-		size_ = 0;
 	}
 		
 	Iterator InsertAfter(ConstIterator pos, const Type& value) {
@@ -200,13 +197,12 @@ class SingleLinkedList {
 		if (IsEmpty()) {
 			return Iterator(nullptr);
 		}
-		Node *const node_to_erase = pos.node_->next_node;
+		Node *const for_erase = pos.node_->next_node;
+		Node *const temp = for_erase->next_node;
+		delete for_erase;
+		pos.node_->next_node = temp;
 		--size_;
-		
-		Node *const node_after_erased= node_to_erase->next_node;
-		delete node_to_erase;
-		pos.node_->next_node = node_after_erased;
-		return Iterator(node_after_erased);
+		return Iterator(temp);
 	}
 		
 	~SingleLinkedList() {
