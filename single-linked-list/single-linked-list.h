@@ -40,7 +40,7 @@ class SingleLinkedList {
         }
 
         [[nodiscard]] bool operator!=(const BasicIterator<const Type>& rhs) const noexcept {
-            return node_ != rhs.node_;
+            return !(*this == rhs);
         }
 
         [[nodiscard]] bool operator==(const BasicIterator<Type>& rhs) const noexcept {
@@ -48,13 +48,12 @@ class SingleLinkedList {
         }
 
         [[nodiscard]] bool operator!=(const BasicIterator<Type>& rhs) const noexcept {
-            return node_ != rhs.node_;
+            return !(*this == rhs);
         }
 
         BasicIterator& operator++() noexcept {
-            if (node_) {
-                node_ = node_->next_node;
-            }
+            assert(node_ != nullptr);
+            node_ = node_->next_node;
             return *this;
         }
 
@@ -65,10 +64,12 @@ class SingleLinkedList {
         }
 
         [[nodiscard]] reference operator*() const noexcept {
+			assert(node_ != nullptr);
              return node_->value;
         }
 
         [[nodiscard]] pointer operator->() const noexcept {
+			assert(node_ != nullptr);
             return &node_->value;
         }
   };
@@ -178,6 +179,7 @@ class SingleLinkedList {
 		
 	Iterator InsertAfter(ConstIterator pos, const Type& value) {
 		auto &prv_node = pos.node_;
+		assert(prv_node != nullptr);
 		prv_node->next_node = new Node(value, prv_node->next_node);
 		++size_;
 		return Iterator(prv_node->next_node);  
@@ -217,7 +219,7 @@ void swap(SingleLinkedList<Type>& lhs, SingleLinkedList<Type>& rhs) noexcept {
 
 template <typename Type>
 bool operator==(const SingleLinkedList<Type>& lhs, const SingleLinkedList<Type>& rhs) {
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return (lhs.GetSize() == rhs.GetSize() && std::equal(lhs.begin(), lhs.end(), rhs.begin()));
 }
 
 template <typename Type>
